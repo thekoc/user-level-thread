@@ -17,13 +17,19 @@ typedef struct {
 } coroutine_t;
 
 typedef struct {
+    int value;
+} semaphore_t;
+
+typedef struct {
     int tid;
     thread_state state;
     coroutine_t coroutine_context;
     func f;
     void *arg;
     void *sp;
+    semaphore_t *semaphore;
 } thread_context_t;
+
 
 typedef struct thread_node_t {
     thread_context_t context;
@@ -43,6 +49,8 @@ void uthread_start();
 void uthread_yield();
 void uthread_suspend(int tid);
 void uthread_resume(int tid);
+int uthread_wait(semaphore_t *semaphore);
+int uthread_signal(semaphore_t *semaphore);
 int get_current_tid();
 
 #endif //USER_LEVEL_THREAD_COROUTINE_H

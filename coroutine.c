@@ -98,6 +98,7 @@ void uthread_spawn(func f, void *arg, int stack_size) {
     node->context.arg = arg;
     node->context.state = READY;
     node->context.tid = ++total_thread_number;
+    node->context.semaphore = NULL;
     node->next = NULL;
     append_to_list(READY_LIST, node);
     size_t malloced_size = stack_size * sizeof(char);
@@ -121,7 +122,9 @@ void uthread_start() {
             current->context.state = DONE;
             uthread_exit();
         } else {
-            current->context.state = READY;
+            if (current->context.state == RUNNING) {
+                current->context.state = READY;
+            }
         }
         current = get_next(get_thread_list(READY_LIST));
     }
@@ -134,4 +137,18 @@ void uthread_suspend(int tid) {
 
 void uthread_resume(int tid) {
     resume_by_tid(tid);
+}
+
+int uthread_wait(semaphore_t *semaphore) {
+    semaphore->value--;
+    if (semaphore->value < 0) {
+        block_by_tid(current->context.tid);
+    }
+    uthread_yield();
+}
+
+int uthread_signal(semaphore_t *semaphore) {
+    semaphore->value++;
+    unblock_by_tid(current->context.tid);
+    uthread_yield();
 }

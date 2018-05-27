@@ -29,14 +29,14 @@ thread_node_t *pop_thread_by_tid(thread_list_t *list, int tid) {
     while (cn) {
         if (cn->context.tid == tid) {
             if (cn == list->tail) {
-                list->tail = list->head;
+                list->tail = last;
             }
             last->next = cn->next;
             list->length--;
             cn->next = NULL;
             return cn;
         }
-        last->next = cn;
+        last = cn;
         cn = cn->next;
     }
     return NULL;

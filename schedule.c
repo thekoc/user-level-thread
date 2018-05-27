@@ -72,14 +72,44 @@ thread_list_t *get_thread_list(list_type lt) {
 int suspend_by_tid(int tid) {
     thread_node_t *node = pop_thread_by_tid(ready_list, tid);
     if (!node) {
-        return -1;
+        node = find_thread(blocked_list, tid);
+        if (!node) {
+            return -1;
+        }
     }
     node->context.state = SUSPENDED;
     append_thread(suspended_list, node);
+    return 0;
 }
 
 int resume_by_tid(int tid) {
     thread_node_t *node = pop_thread_by_tid(suspended_list, tid);
+    if (!node) {
+        node = find_thread(blocked_list, tid);
+        if (!node) {
+            return -1;
+        } else {
+            node->context.state = BLOCKED;
+            return 0;
+        }
+    } else {
+        node->context.state = READY;
+        append_thread(ready_list, node);
+        return 0;
+    }
+}
+
+int block_by_tid(int tid) {
+    thread_node_t *node = pop_thread_by_tid(ready_list, tid);
+    if (!node) {
+        return -1;
+    }
+    node->context.state = BLOCKED;
+    append_thread(blocked_list, node);
+}
+
+int unblock_by_tid(int tid) {
+    thread_node_t *node = pop_thread_by_tid(ready_list, tid);
     if (!node) {
         return -1;
     }

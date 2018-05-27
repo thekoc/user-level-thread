@@ -41,5 +41,7 @@ void uthread_init();
 void uthread_spawn(func f, void *arg, int stack_size);
 void uthread_start();
 void uthread_yield();
+int suspend_by_tid(int tid);
+int resume_by_tid(int tid);
 
 #endif //USER_LEVEL_THREAD_COROUTINE_H

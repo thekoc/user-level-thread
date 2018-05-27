@@ -72,3 +72,13 @@ int suspend_by_tid(int tid) {
     delete_thread_by_tid(ready_list, tid);
     append_thread(suspended_list, node);
 }
+
+int resume_by_tid(int tid) {
+    thread_node *node = find_thread(suspended_list, tid);
+    if (!node) {
+        return -1;
+    }
+    node->context.state = READY;
+    delete_thread_by_tid(suspended_list, tid);
+    append_thread(ready_list, node);
+}

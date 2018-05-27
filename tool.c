@@ -23,7 +23,7 @@ int append_thread(thread_list *list, thread_node *node) {
     return list->length;
 }
 
-int delete_thread_by_tid(thread_list *list, int tid) {
+thread_node *pop_thread_by_tid(thread_list *list, int tid) {
     thread_node *last = list->head;
     thread_node *cn = list->head->next;
     while (cn) {
@@ -33,13 +33,16 @@ int delete_thread_by_tid(thread_list *list, int tid) {
             }
             last->next = cn->next;
             list->length--;
-            return 0;
+            cn->next = NULL;
+            return cn;
         }
+        cn = cn->next;
     }
-    return -1;
+    return NULL;
 }
 
 thread_node *pop_thread(thread_list *list, int pos) {
+    // The next pointer of the returned node will be set to NULL
     if (pos < 0) {
         return pop_thread(list, list->length + pos);
     } else if (pos >= list->length) {

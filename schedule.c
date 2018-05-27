@@ -47,6 +47,7 @@ int append_to_list(list_type lt, thread_node *node) {
     if (lt != ALL_THREADS) {
         thread_node *new_node = malloc(sizeof(thread_node));
         *new_node = *node;
+        new_node->next = NULL;
         append_to_list(ALL_THREADS, new_node);
     }
     return append_thread(get_thread_list(lt), node);
@@ -64,21 +65,19 @@ thread_list *get_thread_list(list_type lt) {
 }
 
 int suspend_by_tid(int tid) {
-    thread_node *node = find_thread(ready_list, tid);
+    thread_node *node = pop_thread_by_tid(ready_list, tid);
     if (!node) {
         return -1;
     }
     node->context.state = SUSPENDED;
-    delete_thread_by_tid(ready_list, tid);
     append_thread(suspended_list, node);
 }
 
 int resume_by_tid(int tid) {
-    thread_node *node = find_thread(suspended_list, tid);
+    thread_node *node = pop_thread_by_tid(suspended_list, tid);
     if (!node) {
         return -1;
     }
     node->context.state = READY;
-    delete_thread_by_tid(suspended_list, tid);
     append_thread(ready_list, node);
 }

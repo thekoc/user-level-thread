@@ -14,27 +14,27 @@ typedef void (*func)(void*);
 typedef struct {
     jmp_buf callee_context;
     jmp_buf caller_context;
-} coroutine;
+} coroutine_t;
 
 typedef struct {
     int tid;
     thread_state state;
-    coroutine coroutine_context;
+    coroutine_t coroutine_context;
     func f;
     void *arg;
     void *sp;
-} thread_context;
+} thread_context_t;
 
-typedef struct thread_node {
-    thread_context context;
-    struct thread_node *next;
-} thread_node;
+typedef struct thread_node_t {
+    thread_context_t context;
+    struct thread_node_t *next;
+} thread_node_t;
 
 typedef struct {
-    thread_node *head;
-    thread_node *tail;
+    thread_node_t *head;
+    thread_node_t *tail;
     int length;
-} thread_list;
+} thread_list_t;
 
 
 void uthread_init();

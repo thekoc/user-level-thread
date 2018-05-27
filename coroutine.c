@@ -9,10 +9,10 @@
 #include "tool.h"
 #include "schedule.h"
 
-thread_node *current = NULL;
+thread_node_t *current = NULL;
 int total_thread_number = 0;
 typedef struct {
-    coroutine* c;
+    coroutine_t* c;
     func f;
     void* arg;
     void* old_sp;
@@ -30,16 +30,16 @@ typedef struct {
 
 enum { FRAME_SZ=8 }; //fairly arbitrary
 
-// yield, next, start, this three functions are just internal implementation of coroutine
+// yield, next, start, this three functions are just internal implementation of coroutine_t
 // and has been wrapped in uthread* functions. So you don't need to call nor modify them in
 // future development.
-void yield(coroutine* c) {
+void yield(coroutine_t* c) {
     if(!setjmp(c->callee_context)) {
         longjmp(c->caller_context, RUNNING);
     }
 }
 
-int next(coroutine* c) {
+int next(coroutine_t* c) {
     int ret = setjmp(c->caller_context);
     if(!ret) {
         longjmp(c->callee_context, 1);
@@ -49,7 +49,7 @@ int next(coroutine* c) {
     }
 }
 
-void start(coroutine* c, func f, void* arg, void *sp) {
+void start(coroutine_t* c, func f, void* arg, void *sp) {
     start_params* p = ((start_params*)sp) - 1;
 
     //save params before stack switching
@@ -93,7 +93,7 @@ void uthread_init() {
 }
 
 void uthread_spawn(func f, void *arg, int stack_size) {
-    thread_node *node = malloc(sizeof(thread_node));
+    thread_node_t *node = malloc(sizeof(thread_node_t));
     node->context.f = f;
     node->context.arg = arg;
     node->context.state = READY;

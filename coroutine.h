@@ -8,7 +8,7 @@
 #include <setjmp.h>
 
 
-typedef enum { RUNNING=1, READY, SUSPENDED, DONE } thread_state;
+typedef enum { RUNNING=1, READY, SUSPENDED, BLOCKED, DONE } thread_state;
 typedef void (*func)(void*);
 
 typedef struct {

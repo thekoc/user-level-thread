@@ -8,9 +8,10 @@
 
 static thread_list *ready_list;
 static thread_list *suspended_list;
+static thread_list *blocked_list;
 static thread_list *all_threads;
 
-thread_list *list_table[4];
+thread_list *list_table[5];
 
 
 thread_list *get_list_by_state(thread_state state) {
@@ -20,6 +21,8 @@ thread_list *get_list_by_state(thread_state state) {
             return ready_list;
         case SUSPENDED:
             return suspended_list;
+        case BLOCKED:
+            return blocked_list;
         default:
             return NULL;
     }
@@ -36,9 +39,11 @@ thread_node *get_next(thread_list *list) {
 int init_scheduler() {
     ready_list = create_thread_list();
     suspended_list = create_thread_list();
+    blocked_list = create_thread_list();
     all_threads = create_thread_list();
     list_table[READY_LIST] = ready_list;
     list_table[SUSPENDED_LIST] = suspended_list;
+    list_table[BLOCKED] = blocked_list;
     list_table[ALL_THREADS] = all_threads;
 }
 

@@ -56,8 +56,6 @@ void start(coroutine* c, func f, void* arg, void *sp) {
     p->c = c;
     p->f = f;
     p->arg = arg;
-    register long rsp asm("rsp");
-    register long rbp asm("rbp");
 
     get_sp(p->old_sp);
     get_fp(p->old_fp);
@@ -130,10 +128,10 @@ void uthread_start() {
 }
 
 
-void uthread_suspend() {
-
+void uthread_suspend(int tid) {
+    suspend_by_tid(tid);
 }
 
-void uthread_resume() {
-
+void uthread_resume(int tid) {
+    resume_by_tid(tid);
 }

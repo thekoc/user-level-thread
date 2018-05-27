@@ -6,7 +6,7 @@ void increase(void *step) {
     int stepn = *((int *) step);
     for (int i = 0; i < 30; i += stepn) {
         if (stepn == 2) {
-            suspend_by_tid(2);
+            uthread_suspend(2);
         }
         printf("current value is %d and step is %d\n", i, stepn);
         uthread_yield();

@@ -43,6 +43,6 @@ void uthread_start();
 void uthread_yield();
 void uthread_suspend(int tid);
 void uthread_resume(int tid);
-int get_curent_tid();
+int get_current_tid();
 
 #endif //USER_LEVEL_THREAD_COROUTINE_H

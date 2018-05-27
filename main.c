@@ -5,14 +5,14 @@
 void increase(void *step) {
     int stepn = *((int *) step);
     for (int i = 0; i < 30; i += stepn) {
-        if (get_curent_tid() == 1) {
+        if (get_current_tid() == 1) {
             if (i < 20) {
                 uthread_suspend(2);
             } else {
                 uthread_resume(2);
             }
         }
-        printf("tid: %d: current value is %d and step is %d\n", get_curent_tid(), i, stepn);
+        printf("tid: %d: current value is %d and step is %d\n", get_current_tid(), i, stepn);
         uthread_yield();
     }
 }

@@ -79,7 +79,7 @@ void start(coroutine* c, func f, void* arg, void *sp) {
 // Functions below needn't to be called nor modified throughout the later development.
 
 
-int get_curent_tid() {
+int get_current_tid() {
     return current->context.tid;
 }
 

@@ -13,7 +13,11 @@ void increase(void *step) {
                 uthread_signal(&sem);
             }
         } else if (tid == 2) {
-            // uthread_wait(&sem);
+            if (i == 0) {
+                uthread_suspend(1);
+            } else if (i == 24) {
+                uthread_resume(1);
+            }
         } else if (tid == 3) {
             if (i == 0) {
                 uthread_wait(&sem);

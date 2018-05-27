@@ -114,7 +114,7 @@ int uthread_exit() {
 }
 
 void uthread_start() {
-    current = get_next(get_thread_list(READY_LIST));
+    current = get_next();
     while (current) {
         current->context.state = RUNNING;
         int ret = next(&current->context.coroutine_context);
@@ -126,7 +126,7 @@ void uthread_start() {
                 current->context.state = READY;
             }
         }
-        current = get_next(get_thread_list(READY_LIST));
+        current = get_next();
     }
 }
 

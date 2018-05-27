@@ -28,7 +28,8 @@ thread_list_t *get_list_by_state(thread_state state) {
     }
 }
 
-thread_node_t *get_next(thread_list_t *list) {
+thread_node_t *get_next() {
+    thread_list_t *list = ready_list;
     thread_node_t *next_node = NULL;
     next_node = pop_thread(list, 0);
     append_thread(list, next_node);

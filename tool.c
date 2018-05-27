@@ -32,6 +32,7 @@ int delete_thread_by_tid(thread_list *list, int tid) {
                 list->tail = list->head;
             }
             last->next = cn->next;
+            list->length--;
             return 0;
         }
     }

@@ -6,9 +6,9 @@
 #include "tool.h"
 #include "coroutine.h"
 
-thread_list *ready_list;
-thread_list *suspended_list;
-thread_list *all_threads;
+static thread_list *ready_list;
+static thread_list *suspended_list;
+static thread_list *all_threads;
 
 thread_list *list_table[4];
 

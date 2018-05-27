@@ -36,6 +36,7 @@ thread_node_t *pop_thread_by_tid(thread_list_t *list, int tid) {
             cn->next = NULL;
             return cn;
         }
+        last->next = cn;
         cn = cn->next;
     }
     return NULL;

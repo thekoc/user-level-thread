@@ -10,6 +10,7 @@
 typedef enum {
     READY_LIST = 1,
     SUSPENDED_LIST,
+    BLOCKED_LIST,
     ALL_THREADS,
 } list_type;
 

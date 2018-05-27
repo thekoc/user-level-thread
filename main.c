@@ -13,9 +13,11 @@ void increase(void *step) {
                 uthread_signal(&sem);
             }
         } else if (tid == 2) {
-            uthread_wait(&sem);
+            // uthread_wait(&sem);
         } else if (tid == 3) {
-            uthread_wait(&sem);
+            if (i == 0) {
+                uthread_wait(&sem);
+            }
         }
         printf("tid: %d - current value is %d and step is %d\n", tid, i, stepn);
         uthread_yield();

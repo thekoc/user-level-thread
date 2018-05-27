@@ -140,6 +140,7 @@ void uthread_resume(int tid) {
 }
 
 int uthread_wait(semaphore_t *semaphore) {
+    current->context.semaphore = semaphore;
     semaphore->value--;
     if (semaphore->value < 0) {
         block_by_tid(current->context.tid);
@@ -149,6 +150,15 @@ int uthread_wait(semaphore_t *semaphore) {
 
 int uthread_signal(semaphore_t *semaphore) {
     semaphore->value++;
-    unblock_by_tid(current->context.tid);
+    thread_list_t *blocked_list = get_thread_list(BLOCKED_LIST);
+    thread_node_t *node = blocked_list->head->next;
+    if (semaphore->value >= 0) {
+        while (node) {
+            if (node->context.semaphore == semaphore) {
+                unblock_by_tid(node->context.tid);
+            }
+            node = node->next;
+        }
+    }
     uthread_yield();
 }

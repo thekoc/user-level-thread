@@ -43,7 +43,7 @@ int init_scheduler() {
     all_threads = create_thread_list();
     list_table[READY_LIST] = ready_list;
     list_table[SUSPENDED_LIST] = suspended_list;
-    list_table[BLOCKED] = blocked_list;
+    list_table[BLOCKED_LIST] = blocked_list;
     list_table[ALL_THREADS] = all_threads;
 }
 
@@ -109,7 +109,7 @@ int block_by_tid(int tid) {
 }
 
 int unblock_by_tid(int tid) {
-    thread_node_t *node = pop_thread_by_tid(ready_list, tid);
+    thread_node_t *node = pop_thread_by_tid(blocked_list, tid);
     if (!node) {
         return -1;
     }

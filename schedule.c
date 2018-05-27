@@ -2,7 +2,7 @@
 // Created by koc on 5/27/18.
 //
 
-#include "thread_list.h"
+#include "schedule.h"
 #include "tool.h"
 #include "coroutine.h"
 
@@ -25,8 +25,15 @@ thread_list *get_list_by_state(thread_state state) {
     }
 }
 
+thread_node *get_next(thread_list *list) {
+    thread_node *next_node = NULL;
+    next_node = pop_thread(list, 0);
+    append_thread(list, next_node);
+    return next_node;
+}
 
-int init_thread_lists() {
+
+int init_scheduler() {
     ready_list = create_thread_list();
     suspended_list = create_thread_list();
     all_threads = create_thread_list();

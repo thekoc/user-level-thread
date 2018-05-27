@@ -13,7 +13,8 @@ typedef enum {
     ALL_THREADS,
 } list_type;
 
-int init_thread_lists(void);
+int init_scheduler(void);
+thread_node *get_next(thread_list *list);
 int append_to_list(list_type lt, thread_node *node);
 thread_node *pop_from_list(list_type lt, int pos);
 int suspend_by_tid(int tid);

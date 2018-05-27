@@ -7,7 +7,7 @@
 #include <stdio.h>
 #include "coroutine.h"
 #include "tool.h"
-#include "thread_list.h"
+#include "schedule.h"
 
 thread_node *current = NULL;
 int total_thread_number = 0;
@@ -80,11 +80,6 @@ void start(coroutine* c, func f, void* arg, void *sp) {
 
 // Functions below needn't to be called nor modified throughout the later development.
 
-thread_node *get_next(thread_list *list) {
-    current = pop_thread(list, 0);
-    append_thread(list, current);
-    return current;
-}
 
 int get_curent_tid() {
     return current->context.tid;
@@ -96,7 +91,7 @@ void uthread_yield() {
 
 
 void uthread_init() {
-    init_thread_lists();
+    init_scheduler();
 }
 
 void uthread_spawn(func f, void *arg, int stack_size) {
@@ -120,7 +115,7 @@ int uthread_exit() {
 }
 
 void uthread_start() {
-    get_next(get_thread_list(READY_LIST));
+    current = get_next(get_thread_list(READY_LIST));
     while (current) {
         current->context.state = RUNNING;
         int ret = next(&current->context.coroutine_context);
@@ -130,7 +125,7 @@ void uthread_start() {
         } else {
             current->context.state = READY;
         }
-        get_next(get_thread_list(READY_LIST));
+        current = get_next(get_thread_list(READY_LIST));
     }
 }
 

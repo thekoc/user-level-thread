@@ -6,7 +6,9 @@
 #define USER_LEVEL_THREAD_COROUTINE_H
 
 #include <setjmp.h>
+#include <sys/time.h>
 
+#define SECOND 1000000
 
 typedef enum { RUNNING=1, READY, SUSPENDED, BLOCKED, DONE } thread_state;
 typedef void (*func)(void*);
@@ -20,6 +22,8 @@ typedef struct {
     int value;
 } semaphore_t;
 
+typedef enum { USER = 1, SYS, PROTECTED} thread_priority;
+
 typedef struct {
     int tid;
     thread_state state;
@@ -28,6 +32,13 @@ typedef struct {
     void *arg;
     void *sp;
     semaphore_t *semaphore;
+
+    // properties for scheduling
+    thread_priority priority;
+    time_t run_time;           // total time the thread has run
+    time_t assume_full_time;   // used in SRT schedule algorithm
+    time_t left_time;          // equals assume_full_time minus run_time
+    double burst_time;         // indicates how many times it been scheduled
 } thread_context_t;
 
 
@@ -48,7 +59,7 @@ typedef struct {
 void uthread_init();
 
 // Spawn a thread which will start after `uthread_start`.
-void uthread_spawn(func f, void *arg, int stack_size);
+void uthread_spawn(func f, void *arg, int stack_size, time_t total_time);
 
 // Start to run all spawned threads. Returns if every thread is done or killed.
 void uthread_start();

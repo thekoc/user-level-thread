@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <stdio.h>
+#include <sys/time.h>
 #include "coroutine.h"
 #include "tool.h"
 #include "schedule.h"
@@ -76,8 +77,13 @@ void start(coroutine_t* c, func f, void* arg, void *sp) {
     longjmp(p->c->caller_context, DONE);
 }
 
-// Functions below needn't to be called nor modified throughout the later development.
 
+time_t get_time_in_microseconds() {
+    struct timeval tv;
+    gettimeofday(&tv,NULL);
+    time_t time_in_micros = 1000000 * tv.tv_sec + tv.tv_usec;
+    return time_in_micros;
+}
 
 int get_current_tid() {
     return current->context.tid;
@@ -92,13 +98,20 @@ void uthread_init() {
     init_scheduler();
 }
 
-void uthread_spawn(func f, void *arg, int stack_size) {
+void uthread_spawn(func f, void *arg, int stack_size, time_t total_time) {
     thread_node_t *node = malloc(sizeof(thread_node_t));
-    node->context.f = f;
-    node->context.arg = arg;
-    node->context.state = READY;
-    node->context.tid = ++total_thread_number;
-    node->context.semaphore = NULL;
+    thread_context_t *context = &node->context;
+    context->f = f;
+    context->arg = arg;
+    context->state = READY;
+    context->tid = ++total_thread_number;
+    context->semaphore = NULL;
+    context->burst_time = 0;
+    context->run_time = 0;
+    // TODO: change the fake data
+    context->assume_full_time = total_time;
+    context->left_time = context->assume_full_time;
+    context->priority = USER;
     node->next = NULL;
     append_to_list(READY_LIST, node);
     size_t malloced_size = stack_size * sizeof(char);
@@ -117,7 +130,13 @@ void uthread_start() {
     current = get_next();
     while (current) {
         current->context.state = RUNNING;
+        time_t start = get_time_in_microseconds();
         int ret = next(&current->context.coroutine_context);
+        time_t interval = get_time_in_microseconds() - start;
+        current->context.run_time += (interval);
+        current->context.burst_time += 1;
+        current->context.left_time -= interval;
+        printf("==== in scheduling tid: %d, left  time %li\n", get_current_tid(), current->context.left_time / 1000000);
         if (!ret) {
             current->context.state = DONE;
             uthread_exit();

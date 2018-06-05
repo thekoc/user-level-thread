@@ -28,13 +28,129 @@ thread_list_t *get_list_by_state(thread_state state) {
     }
 }
 
-thread_node_t *get_next() {
-    thread_list_t *list = ready_list;
-    thread_node_t *next_node = NULL;
-    next_node = pop_thread(list, 0);
-    append_thread(list, next_node);
-    return next_node;
+#define fcfs
+#define static_pri
+#define srt
+#ifdef fcfs
+thread_node_t *get_next(thread_list_t* _l) {
+//    thread_list_t *list = ready_list;
+//    thread_node_t *next_node = NULL;
+//    next_node = pop_thread(list, 0);
+//    append_thread(list, next_node);
+//    return next_node;
+    // no node in the list
+    if (_l.length == 0)
+        return nullptr;
+    thread_node_t* temp = nullptr;
+    // tail keeps the same
+    if (_l.length > 1) {
+        temp = _l.head->next;
+        _l.head->next = _l.head->next->next;
+        _l.length--;
+        return temp;
+    }
+    // merge tail and head
+    if (_l.length == 1) {
+        temp = _l.head->next;
+        _l.head->next = _l.head->next->next;
+        _l.tail = _l.head;
+        _l.length--;
+        return temp;
+    }
 }
+#endif
+
+#ifdef static_pri
+thread_node_t* get_next(thread_list_t* _l) {
+    if (_l->length == 0)
+        return nullptr;
+    thread_node_t* temp = nullptr;
+    // only one node in the list
+    if (_l->length == 1) {
+        temp = _l.head->next;
+        _l.head->next = _l.head->next->next;
+        _l.length--;
+        return temp;
+    }
+    if (_l->length > 1) {
+        temp = _l->head->next;
+        thread_node_t* pre_temp = _l->head;
+        thread_node_t* itr = temp;
+        thread_node_t* pre_itr = _l->head;
+        while (true) {
+            if (itr->context.priority > temp->context.priority)
+                temp = itr;
+                pre_temp = pre_itr;
+            itr = itr->next;
+            pre_itr = pre_itr->next;
+            if (itr == nullptr)
+                break;
+        }
+        // now temp is the node to return
+        // temp is the rear item
+        if (temp->next == nullptr) {
+            _l->tail = pre_temp;
+            pre_temp->next = nullptr;
+            _l->length--;
+            return temp;
+        }
+        // temp is not rear item
+        if (temp->next != nullptr) {
+            pre_temp->next = temp->next;
+            _l->length--;
+            return temp;
+        }
+    }
+}
+#endif
+
+
+#ifdef srt
+thread_node_t* get_next(thread_list_t* _l) {
+    if (_l->length == 0)
+        return nullptr;
+    thread_node_t* temp = nullptr;
+    // only one node in the list
+    if (_l->length == 1) {
+        temp = _l.head->next;
+        _l.head->next = _l.head->next->next;
+        _l.length--;
+        return temp;
+    }
+    if (_l->length > 1) {
+        temp = _l->head->next;
+        thread_node_t* pre_temp = _l->head;
+        thread_node_t* itr = temp;
+        thread_node_t* pre_itr = _l->head;
+        while (true) {
+            if (itr->context.left_time < temp->context.left_time)
+                temp = itr;
+            pre_temp = pre_itr;
+            itr = itr->next;
+            pre_itr = pre_itr->next;
+            if (itr == nullptr)
+                break;
+        }
+        // now temp is the node to return
+        // temp is the rear item
+        if (temp->next == nullptr) {
+            _l->tail = pre_temp;
+            pre_temp->next = nullptr;
+            _l->length--;
+            return temp;
+        }
+        // temp is not rear item
+        if (temp->next != nullptr) {
+            pre_temp->next = temp->next;
+            _l->length--;
+            return temp;
+        }
+    }
+
+}
+
+#define srt
+
 
 
 int init_scheduler() {

@@ -3,6 +3,9 @@
 #include "coroutine.h"
 
 #define N 4096
+#define fcfs
+// #define static_pri
+// #define srt
 
 semaphore_t sem;
 void increase(void *step) {
@@ -40,4 +43,3 @@ int main() {
     }
     uthread_start();
 }
-

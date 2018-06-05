@@ -32,8 +32,8 @@ thread_list_t *get_list_by_state(thread_state state) {
 thread_node_t *get_next() {
     thread_list_t* _l = ready_list;
     if (_l->length == 0)
-        return nullptr;
-    thread_node_t* temp = nullptr;
+        return NULL;
+    thread_node_t* temp = NULL;
     // tail keeps the same
     if (_l->length > 1) {
         temp = _l->head->next;
@@ -56,8 +56,8 @@ thread_node_t *get_next() {
 thread_node_t* get_next() {
     thread_list_t* _l = ready_list;
     if (_l->length == 0)
-        return nullptr;
-    thread_node_t* temp = nullptr;
+        return NULL;
+    thread_node_t* temp = NULL;
     // only one node in the list
     if (_l->length == 1) {
         temp = _l->head->next;
@@ -76,19 +76,19 @@ thread_node_t* get_next() {
                 pre_temp = pre_itr;
             itr = itr->next;
             pre_itr = pre_itr->next;
-            if (itr == nullptr)
+            if (itr == NULL)
                 break;
         }
         // now temp is the node to return
         // temp is the rear item
-        if (temp->next == nullptr) {
+        if (temp->next == NULL) {
             _l->tail = pre_temp;
-            pre_temp->next = nullptr;
+            pre_temp->next = NULL;
             _l->length--;
             return temp;
         }
         // temp is not rear item
-        if (temp->next != nullptr) {
+        if (temp->next != NULL) {
             pre_temp->next = temp->next;
             _l->length--;
             return temp;
@@ -102,8 +102,8 @@ thread_node_t* get_next() {
 thread_node_t* get_next() {
     thread_list_t* _l = ready_list;
     if (_l->length == 0)
-        return nullptr;
-    thread_node_t* temp = nullptr;
+        return NULL;
+    thread_node_t* temp = NULL;
     // only one node in the list
     if (_l->length == 1) {
         temp = _l->head->next;
@@ -122,19 +122,19 @@ thread_node_t* get_next() {
             pre_temp = pre_itr;
             itr = itr->next;
             pre_itr = pre_itr->next;
-            if (itr == nullptr)
+            if (itr == NULL)
                 break;
         }
         // now temp is the node to return
         // temp is the rear item
-        if (temp->next == nullptr) {
+        if (temp->next == NULL) {
             _l->tail = pre_temp;
-            pre_temp->next = nullptr;
+            pre_temp->next = NULL;
             _l->length--;
             return temp;
         }
         // temp is not rear item
-        if (temp->next != nullptr) {
+        if (temp->next != NULL) {
             pre_temp->next = temp->next;
             _l->length--;
             return temp;
@@ -155,6 +155,7 @@ int init_scheduler() {
     list_table[SUSPENDED_LIST] = suspended_list;
     list_table[BLOCKED_LIST] = blocked_list;
     list_table[ALL_THREADS] = all_threads;
+    return 0;
 }
 
 
@@ -216,6 +217,7 @@ int block_by_tid(int tid) {
     }
     node->context.state = BLOCKED;
     append_thread(blocked_list, node);
+    return 0;
 }
 
 int unblock_by_tid(int tid) {
@@ -225,4 +227,5 @@ int unblock_by_tid(int tid) {
     }
     node->context.state = READY;
     append_thread(ready_list, node);
+    return 0;
 }

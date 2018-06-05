@@ -67,7 +67,6 @@ void start(coroutine_t* c, func f, void* arg, void *sp) {
     get_fp(p); //…so we read p back from $fp
 
     //and now we read our params from p
-    p->c;
     if(!setjmp(p->c->callee_context)) {
         set_sp(p->old_sp);
         set_fp(p->old_fp);
@@ -124,6 +123,7 @@ void uthread_spawn(func f, void *arg, int stack_size, time_t total_time) {
 int uthread_exit() {
     pop_from_list(READY_LIST, -1);
     free(current);
+    return 0;
 }
 
 void uthread_start() {
@@ -165,6 +165,7 @@ int uthread_wait(semaphore_t *semaphore) {
         block_by_tid(current->context.tid);
     }
     uthread_yield();
+    return 0;
 }
 
 int uthread_signal(semaphore_t *semaphore) {
@@ -180,4 +181,5 @@ int uthread_signal(semaphore_t *semaphore) {
         }
     }
     uthread_yield();
+    return 0;
 }

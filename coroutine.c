@@ -20,14 +20,28 @@ typedef struct {
     void* old_fp;
 } start_params;
 
+#ifdef __linux__ 
+
 #define get_sp(p) \
-  asm volatile("movq %%rsp, %0" : "=r"(p))
+    asm volatile("movq %%rsp, %0" : "=r"(p))
 #define get_fp(p) \
-  asm volatile("movq %%rbp, %0" : "=r"(p))
+    asm volatile("movq %%rbp, %0" : "=r"(p))
 #define set_sp(p) \
-  asm volatile("movq %0, %%rsp" : : "r"(p))
+    asm volatile("movq %0, %%rsp" : : "r"(p))
 #define set_fp(p) \
-  asm volatile("movq %0, %%rbp" : : "r"(p))
+    asm volatile("movq %0, %%rbp" : : "r"(p))
+
+#elif _WIN32
+#define get_sp(p) \
+    __asm { mov rsp, p }
+#define get_fp(p) \
+    __asm { mov rbp, p }
+#define set_sp(p) \
+    __asm { mov p, rsp}
+#define set_fp(p) \
+    __asm { mov p, rbp }
+#endif
+
 
 enum { FRAME_SZ=8 }; //fairly arbitrary
 

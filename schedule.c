@@ -28,48 +28,41 @@ thread_list_t *get_list_by_state(thread_state state) {
     }
 }
 
-#define fcfs
-#define static_pri
-#define srt
 #ifdef fcfs
-thread_node_t *get_next(thread_list_t* _l) {
-//    thread_list_t *list = ready_list;
-//    thread_node_t *next_node = NULL;
-//    next_node = pop_thread(list, 0);
-//    append_thread(list, next_node);
-//    return next_node;
-    // no node in the list
-    if (_l.length == 0)
+thread_node_t *get_next() {
+    thread_list_t* _l = ready_list;
+    if (_l->length == 0)
         return nullptr;
     thread_node_t* temp = nullptr;
     // tail keeps the same
-    if (_l.length > 1) {
-        temp = _l.head->next;
-        _l.head->next = _l.head->next->next;
-        _l.length--;
+    if (_l->length > 1) {
+        temp = _l->head->next;
+        _l->head->next = _l->head->next->next;
+        _l->length--;
         return temp;
     }
     // merge tail and head
-    if (_l.length == 1) {
-        temp = _l.head->next;
-        _l.head->next = _l.head->next->next;
-        _l.tail = _l.head;
-        _l.length--;
+    if (_l->length == 1) {
+        temp = _l->head->next;
+        _l->head->next = _l->head->next->next;
+        _l->tail = _l->head;
+        _l->length--;
         return temp;
     }
 }
 #endif
 
 #ifdef static_pri
-thread_node_t* get_next(thread_list_t* _l) {
+thread_node_t* get_next() {
+    thread_list_t* _l = ready_list;
     if (_l->length == 0)
         return nullptr;
     thread_node_t* temp = nullptr;
     // only one node in the list
     if (_l->length == 1) {
-        temp = _l.head->next;
-        _l.head->next = _l.head->next->next;
-        _l.length--;
+        temp = _l->head->next;
+        _l->head->next = _l->head->next->next;
+        _l->length--;
         return temp;
     }
     if (_l->length > 1) {
@@ -106,15 +99,16 @@ thread_node_t* get_next(thread_list_t* _l) {
 
 
 #ifdef srt
-thread_node_t* get_next(thread_list_t* _l) {
+thread_node_t* get_next() {
+    thread_list_t* _l = ready_list;
     if (_l->length == 0)
         return nullptr;
     thread_node_t* temp = nullptr;
     // only one node in the list
     if (_l->length == 1) {
-        temp = _l.head->next;
-        _l.head->next = _l.head->next->next;
-        _l.length--;
+        temp = _l->head->next;
+        _l->head->next = _l->head->next->next;
+        _l->length--;
         return temp;
     }
     if (_l->length > 1) {
@@ -148,8 +142,7 @@ thread_node_t* get_next(thread_list_t* _l) {
     }
 
 }
-
-#define srt
+#endif
 
 
 

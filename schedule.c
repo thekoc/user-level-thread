@@ -13,6 +13,7 @@ static thread_list_t *all_threads;
 
 thread_list_t *list_table[5];
 
+static scheduling_algorithm_type SCHEDULING_ALGORITHM = CYCLE;
 
 thread_list_t *get_list_by_state(thread_state state) {
     switch (state) {
@@ -28,32 +29,22 @@ thread_list_t *get_list_by_state(thread_state state) {
     }
 }
 
-#ifdef fcfs
-thread_node_t *get_next() {
-    thread_list_t* _l = ready_list;
-    if (_l->length == 0)
-        return NULL;
-    thread_node_t* temp = NULL;
-    // tail keeps the same
-    if (_l->length > 1) {
-        temp = _l->head->next;
-        _l->head->next = _l->head->next->next;
-        _l->length--;
-        return temp;
-    }
-    // merge tail and head
-    if (_l->length == 1) {
-        temp = _l->head->next;
-        _l->head->next = _l->head->next->next;
-        _l->tail = _l->head;
-        _l->length--;
-        return temp;
-    }
+// cycle run
+thread_node_t *get_next_cycle() {
+    thread_list_t *list = ready_list;
+    thread_node_t *next_node = NULL;
+    next_node = pop_thread(list, 0);
+    append_thread(list, next_node);
+    return next_node;
 }
-#endif
 
-#ifdef static_pri
-thread_node_t* get_next() {
+// first come first serve
+thread_node_t *get_next_fcfs() {
+    return ready_list->head->next;
+}
+
+// static priority
+thread_node_t* get_next_static_pri() {
     thread_list_t* _l = ready_list;
     if (_l->length == 0)
         return NULL;
@@ -70,7 +61,7 @@ thread_node_t* get_next() {
         thread_node_t* pre_temp = _l->head;
         thread_node_t* itr = temp;
         thread_node_t* pre_itr = _l->head;
-        while (true) {
+        while (1) {
             if (itr->context.priority > temp->context.priority)
                 temp = itr;
                 pre_temp = pre_itr;
@@ -95,11 +86,10 @@ thread_node_t* get_next() {
         }
     }
 }
-#endif
 
 
-#ifdef srt
-thread_node_t* get_next() {
+// srt
+thread_node_t* get_next_srt() {
     thread_list_t* _l = ready_list;
     if (_l->length == 0)
         return NULL;
@@ -116,7 +106,7 @@ thread_node_t* get_next() {
         thread_node_t* pre_temp = _l->head;
         thread_node_t* itr = temp;
         thread_node_t* pre_itr = _l->head;
-        while (true) {
+        while (1) {
             if (itr->context.left_time < temp->context.left_time)
                 temp = itr;
             pre_temp = pre_itr;
@@ -142,9 +132,24 @@ thread_node_t* get_next() {
     }
 
 }
-#endif
+
+int set_algorithm(scheduling_algorithm_type algorithm) {
+    SCHEDULING_ALGORITHM = algorithm;
+}
 
 
+thread_node_t* get_next() {
+    switch (SCHEDULING_ALGORITHM) {
+        case CYCLE:
+            return get_next_cycle();
+        case FCFS:
+            return get_next_fcfs();
+        case SP:
+            return get_next_static_pri();
+        case SRT:
+            return get_next_srt();
+    }
+}
 
 int init_scheduler() {
     ready_list = create_thread_list();

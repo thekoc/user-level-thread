@@ -1,11 +1,9 @@
 #include <stdio.h>
 #include <unistd.h>
 #include "coroutine.h"
+#include "schedule.h"
 
 #define N 4096
-#define fcfs
-// #define static_pri
-// #define srt
 
 semaphore_t sem;
 void increase(void *step) {
@@ -36,6 +34,7 @@ void increase(void *step) {
 
 int main() {
     int steps[] = {1, 3, 5};
+    set_algorithm(CYCLE);
     sem.value = 0;
     uthread_init();
     for (int i = 0; i < 3; i++) {

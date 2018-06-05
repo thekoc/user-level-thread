@@ -14,6 +14,13 @@ typedef enum {
     ALL_THREADS,
 } list_type;
 
+typedef enum {
+    CYCLE,
+    FCFS,
+    SP,
+    SRT
+} scheduling_algorithm_type;
+
 // Call this function before any scheduling.
 int init_scheduler(void);
 
@@ -37,5 +44,8 @@ int unblock_by_tid(int tid);
 
 // Returns the corresponding list depends on list_type.
 thread_list_t *get_thread_list(list_type lt);
+
+// Set the scheduling algorithm
+int set_algorithm(scheduling_algorithm_type algorithm);
 
 #endif //USER_LEVEL_THREAD_THREAD_LIST_H

@@ -121,7 +121,6 @@ void uthread_spawn(func f, void *arg, int stack_size, time_t total_time) {
     context->semaphore = NULL;
     context->burst_time = 0;
     context->run_time = 0;
-    // TODO: change the fake data
     context->assume_full_time = total_time;
     context->left_time = context->assume_full_time;
     context->priority = USER;

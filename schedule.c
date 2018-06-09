@@ -48,13 +48,11 @@ thread_node_t* get_next_static_pri() {
     thread_list_t* _l = ready_list;
     if (_l->length == 0)
         return NULL;
+    // temp store the node to return
     thread_node_t* temp = NULL;
     // only one node in the list
     if (_l->length == 1) {
-        temp = _l->head->next;
-        _l->head->next = _l->head->next->next;
-        _l->length--;
-        return temp;
+        return _l->head->next;
     }
     if (_l->length > 1) {
         temp = _l->head->next;
@@ -73,20 +71,16 @@ thread_node_t* get_next_static_pri() {
         // now temp is the node to return
         // temp is the rear item
         if (temp->next == NULL) {
-            _l->tail = pre_temp;
-            pre_temp->next = NULL;
-            _l->length--;
             return temp;
         }
         // temp is not rear item
         if (temp->next != NULL) {
             pre_temp->next = temp->next;
-            _l->length--;
+            append_to_list(_l, temp);
             return temp;
         }
     }
 }
-
 
 // srt
 thread_node_t* get_next_srt() {
@@ -96,9 +90,6 @@ thread_node_t* get_next_srt() {
     thread_node_t* temp = NULL;
     // only one node in the list
     if (_l->length == 1) {
-        temp = _l->head->next;
-        _l->head->next = _l->head->next->next;
-        _l->length--;
         return temp;
     }
     if (_l->length > 1) {
@@ -118,19 +109,15 @@ thread_node_t* get_next_srt() {
         // now temp is the node to return
         // temp is the rear item
         if (temp->next == NULL) {
-            _l->tail = pre_temp;
-            pre_temp->next = NULL;
-            _l->length--;
             return temp;
         }
         // temp is not rear item
         if (temp->next != NULL) {
             pre_temp->next = temp->next;
-            _l->length--;
+            append_to_list(_l, temp);
             return temp;
         }
     }
-
 }
 
 int set_algorithm(scheduling_algorithm_type algorithm) {
